@@ -3,6 +3,8 @@ import altair as alt
 import pandas as pd
 import streamlit as st
 
+st.set_page_config(page_title="The Ramsey Highlights", layout="wide")
+
 st.header('st.write')
 
 st.write(1234)
@@ -13,31 +15,18 @@ df = pd.DataFrame({
      })
 st.write(df)
 
-
 st.write('Below is a DataFrame:', df, 'Above is a dataframe.')
-
 
 df2 = pd.DataFrame(
      np.random.randn(200, 3),
      columns=['a', 'b', 'c'])
 c = alt.Chart(df2).mark_circle().encode(
      x='a', y='b', size='c', color='c', tooltip=['a', 'b', 'c'])
-st.write(c)
 
-
-st.header('Line chart')
 
 chart_data = pd.DataFrame(
      np.random.randn(10, 3),
      columns=['a', 'b', 'c'])
-
-st.line_chart(chart_data)
-
-st.header('bar chart')
-st.bar_chart(chart_data)
-
-st.header('area chart')
-st.area_chart(chart_data)
 
 st.header('pie chart')
 import plotly.express as px
@@ -48,9 +37,34 @@ fig = px.pie(df, values='pop', names='country', title='Population of European co
 #fig = go.Figure(data=[go.Pie(hole=.3)])
 st.plotly_chart(fig)
 
-st.sidebar.slider('Select a number:', 0, 10, 5)
+#st.sidebar.slider('Select a number:', 0, 10, 5)
 option = st.sidebar.selectbox(
      'What is your favorite color?',
      ('Blue', 'Red', 'Green'))
 
 st.write('Your favorite color is ', option)
+
+col1, col2, col3 = st.columns(3)
+with col1:
+    st.write("""#### Lists of movies filtered by year and Genre """)
+    st.area_chart(chart_data)
+
+with col2:
+    st.write("""#### User score of movies and their genre """)
+    st.bar_chart(chart_data)
+    st.write('t\n t\n t\n')
+
+with col3:
+    st.plotly_chart(fig)
+
+col1, col2, col3 = st.columns(3)
+with col1:
+    st.write("""#### Lists of movies filtered by year and Genre """)
+    st.line_chart(chart_data)
+
+with col2:
+    st.write("""#### User score of movies and their genre """)
+    st.bar_chart(chart_data)
+
+with col3:
+    st.write(c)   
