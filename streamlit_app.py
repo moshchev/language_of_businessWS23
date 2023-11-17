@@ -5,15 +5,7 @@ import streamlit as st
 
 st.header('st.write')
 
-# 样例 1
-
-st.write('Hello, *World!* :sunglasses:')
-
-# 样例 2
-
 st.write(1234)
-
-# 样例 3
 
 df = pd.DataFrame({
      'first column': [1, 2, 3, 4],
@@ -21,11 +13,9 @@ df = pd.DataFrame({
      })
 st.write(df)
 
-# 样例 4
 
 st.write('Below is a DataFrame:', df, 'Above is a dataframe.')
 
-# 样例 5
 
 df2 = pd.DataFrame(
      np.random.randn(200, 3),
@@ -35,7 +25,6 @@ c = alt.Chart(df2).mark_circle().encode(
 st.write(c)
 
 
-
 st.header('Line chart')
 
 chart_data = pd.DataFrame(
@@ -43,14 +32,25 @@ chart_data = pd.DataFrame(
      columns=['a', 'b', 'c'])
 
 st.line_chart(chart_data)
+
 st.header('bar chart')
 st.bar_chart(chart_data)
+
 st.header('area chart')
 st.area_chart(chart_data)
 
 st.header('pie chart')
 import plotly.express as px
+import plotly.graph_objects as go
 df = px.data.gapminder().query("year == 2007").query("continent == 'Europe'")
 df.loc[df['pop'] < 2.e6, 'country'] = 'Other countries' # Represent only large countries
 fig = px.pie(df, values='pop', names='country', title='Population of European continent')
+#fig = go.Figure(data=[go.Pie(hole=.3)])
 st.plotly_chart(fig)
+
+st.sidebar.slider('Select a number:', 0, 10, 5)
+option = st.sidebar.selectbox(
+     'What is your favorite color?',
+     ('Blue', 'Red', 'Green'))
+
+st.write('Your favorite color is ', option)
