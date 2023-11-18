@@ -43,6 +43,13 @@ option = st.sidebar.selectbox(
      ('Blue', 'Red', 'Green'))
 
 st.write('Your favorite color is ', option)
+df = pd.DataFrame(dict(
+    r=[1, 5, 2, 2, 3],
+    theta=['processing cost','mechanical properties','chemical stability',
+           'thermal stability', 'device integration']))
+fig1 = px.line_polar(df, r='r', theta='theta', line_close=True)
+st.plotly_chart(fig1)
+
 
 col1, col2, col3 = st.columns(3)
 with col1:
