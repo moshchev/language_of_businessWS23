@@ -74,4 +74,4 @@ with col2:
     st.bar_chart(chart_data)
 
 with col3:
-    st.write(c)   
+    st.write(c)
