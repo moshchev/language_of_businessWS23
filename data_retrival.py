@@ -7,7 +7,7 @@ def change_date(df):
     return df
 
 
-def addition_of_metrics(df, first_summand, second_summand, name_of_new_metric):
+def substraction_of_metrics(df, first_summand, second_summand, name_of_new_metric):
     assets = df.loc[df['Financial Indicators'] == first_summand].iloc[0]
     debt = df.loc[df['Financial Indicators'] == second_summand].iloc[0]
     na = assets.iloc[2:] - debt.iloc[2:]
@@ -55,7 +55,7 @@ def get_data(ticker):
     fin_table = fin_table.reset_index().rename(columns={'index': 'Financial Indicators'})
     
     # add net assets
-    fin_table = addition_of_metrics(fin_table, 'Total Assets', 'Total Debt', 'Net Assets')
+    fin_table = substraction_of_metrics(fin_table, 'Total Assets', 'Total Debt', 'Net Assets')
 
     # add year averages for 
     fin_table = year_averages(fin_table, 'Total Assets')
@@ -64,7 +64,7 @@ def get_data(ticker):
     
     return fin_table
 
-
+# TODO add sources
 def get_rate(df, nom, denom, year = False):
 
     nom_data = df[df['Financial Indicators'] == nom]
@@ -75,7 +75,7 @@ def get_rate(df, nom, denom, year = False):
     
     rate=nom_values/denom_values
     if year:
-        rate = rate * 360
+        rate = rate * 365
    
     calc = pd.DataFrame(rate, columns=df.columns[2:])
     
@@ -84,7 +84,7 @@ def get_rate(df, nom, denom, year = False):
 if __name__ == '__main__':
     #company = input('Type a ticker: ')
     table = get_data('PEP')
-    #print(table.tail(15))
+    print(table.tail(15))
     some_metric = get_rate(table, 'Total Assets', 'Total Debt')
     year_mult = get_rate(table, 'Total Assets', 'Total Debt', year=True)
     print(f'Here is normal metric {some_metric}')
