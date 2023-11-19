@@ -65,7 +65,7 @@ def get_data(ticker):
     return fin_table
 
 
-def get_rate(df, nom, denom):
+def get_rate(df, nom, denom, year = False):
 
     nom_data = df[df['Financial Indicators'] == nom]
     denom_data = df[df['Financial Indicators'] == denom]
@@ -74,6 +74,9 @@ def get_rate(df, nom, denom):
     denom_values=denom_data.iloc[:,2:].values
     
     rate=nom_values/denom_values
+    if year:
+        rate = rate * 360
+   
     calc = pd.DataFrame(rate, columns=df.columns[2:])
     
     return calc
@@ -81,5 +84,9 @@ def get_rate(df, nom, denom):
 if __name__ == '__main__':
     #company = input('Type a ticker: ')
     table = get_data('PEP')
-    print(table.tail(15))
+    #print(table.tail(15))
+    some_metric = get_rate(table, 'Total Assets', 'Total Debt')
+    year_mult = get_rate(table, 'Total Assets', 'Total Debt', year=True)
+    print(f'Here is normal metric {some_metric}')
+    print(f'multiplied with 360 {year_mult}')
     
