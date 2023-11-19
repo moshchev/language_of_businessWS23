@@ -154,5 +154,8 @@ with col2:
 
 with col3:
     #show numbers
+    st.header('')
+    st.header('')
     st.header('display some numbers')
+    st.write('')
     st.header('test value $100')
