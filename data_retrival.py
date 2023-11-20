@@ -65,10 +65,10 @@ def get_data(ticker):
     return fin_table
 
 # TODO add sources
-def get_rate(df, nom, denom, year = False):
+def get_rate(df, nom, denom, nom_source, denom_source ,year = False):
 
-    nom_data = df[df['Financial Indicators'] == nom]
-    denom_data = df[df['Financial Indicators'] == denom]
+    nom_data = df[(df['Financial Indicators'] == nom) & (df['Data Source'] == nom_source)]
+    denom_data = df[(df['Financial Indicators'] == denom) & (df['Data Source'] == denom_source)]
     
     nom_values=nom_data.iloc[:,2:].values
     denom_values=denom_data.iloc[:,2:].values
@@ -85,8 +85,7 @@ if __name__ == '__main__':
     #company = input('Type a ticker: ')
     table = get_data('PEP')
     print(table.tail(15))
-    some_metric = get_rate(table, 'Total Assets', 'Total Debt')
-    year_mult = get_rate(table, 'Total Assets', 'Total Debt', year=True)
+    some_metric = get_rate(table, 'Total Assets', 'Total Debt', 'bs', 'bs' )
+    year_mult = get_rate(table, 'Total Assets', 'Total Debt', 'bs', 'bs', year=True)
     print(f'Here is normal metric {some_metric}')
     print(f'multiplied with 360 {year_mult}')
-    
