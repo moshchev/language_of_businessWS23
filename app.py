@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 import streamlit as st
 from data_retrival import *
+import plotly.graph_objects as go
 
 st.set_page_config(layout="wide")
 #------ INIALISAION OF APP
@@ -15,6 +16,7 @@ def initialise_session_state():
 
 # Handle submission -> after the button is clicked, retrived data is stored
 # TODO check if it makes sence to save computed metrics in cache as well
+
 def handle_submission():
     result_df = get_data(user_input)
 
@@ -24,8 +26,21 @@ def handle_submission():
     fcf_to_revenue = get_rate(result_df, 'Free Cash Flow', 'Total Revenue', 'cf', 'is')
     cash_conversion_rate = get_rate(result_df, 'Operating Cash Flow', 'Net Income', 'cf', 'is')
     dso = get_rate(result_df, 'Accounts Receivable MA', 'Total Revenue', 'bs', 'is', year=True)
-
+    ito = get_rate(result_df, "InventoryMA","Cost Of Revenue","bs","is", year=True)
+    dpo = get_rate(result_df, "Accounts PayableMA","Cost Of Revenue","bs","is", year=True)
+    assert_Turnover_Rate = get_rate(result_df, "Total Revenue", "Total AssetsMA", "is", "bs")
+    Current_Ratio =  get_rate(result_df, "Current Assets", "Current Liabilities", "bs", "bs")
+    Solvency = get_rate(result_df, "EBIT","Interest Expense","is","is")
+    
+    Total_Revenue = result_df[(result_df['Financial Indicators']=='Total Revenue')].iloc[:,2:]
+    Cost_of_Revenue = result_df[(result_df['Financial Indicators']=='Cost Of Revenue')].iloc[:,2:]
+    Gross_Profit = result_df[(result_df['Financial Indicators']=='Gross Profit')].iloc[:,2:]
+    Selling = result_df[(result_df['Financial Indicators']=='Selling General And Administration')].iloc[:,2:]
+    ebit = result_df[(result_df['Financial Indicators']=='EBIT')].iloc[:,2:]
+    Interest_Expense = result_df[(result_df['Financial Indicators']=='Interest Expense')].iloc[:,2:]
+    Net_Income = result_df[(result_df['Financial Indicators']=='Net Income')].iloc[:,2:]
     # Append the DataFrame and input to the session state
+    
     st.session_state['submissions'].append({
         'input': user_input, 
         'result': result_df,
@@ -33,7 +48,19 @@ def handle_submission():
         'gross_margin_rate':gross_margin_rate,
         'fcf_to_revenue': fcf_to_revenue,
         'cash_conversion_rate': cash_conversion_rate,
-        'dso':dso
+        'dso':dso,
+        'ito':ito,
+        'dpo':dpo,
+        'assert_Turnover_Rate':assert_Turnover_Rate,
+        "Current_Ratio":Current_Ratio,
+        'Solvency':Solvency,
+        'Total_Revenue':Total_Revenue,
+        'Cost_of_Revenue':Cost_of_Revenue,
+        'Gross_Profit':Gross_Profit,
+        'Selling':Selling,
+        'ebit':ebit,
+        'Interest_Expense':Interest_Expense,
+        'Net_Income':Net_Income
     })
     st.session_state['compare_mode'] = False
 
@@ -103,5 +130,33 @@ else:
             st.dataframe(selected_submission['gross_margin_rate'])
             st.write('DSO')
             st.dataframe(selected_submission['dso'])
-            
+            st.write('Total Revenue')
+            st.dataframe(selected_submission['Total_Revenue'])
+            st.write('Gross_Profit')
+            st.dataframe(selected_submission['Gross_Profit'])
+            st.dataframe(selected_submission['Cost_of_Revenue'])
+            st.write('## draw the waterfall chart')
+            time = st.selectbox('selcet the time',(list(selected_submission['Gross_Profit'].columns)))
+            fig = go.Figure(go.Waterfall(
+                name = "", orientation = "v",
+                measure = ["relative", "relative", "total", 
+                            "relative", "relative", "total",
+                            "relative", "relative", "total"],
+                x = ["Total Revenue", "Cost of Revenue", "Gross Profit",
+                        "Selling", "Others", "EBIT",
+                        "Interest_Expense","Tax","Net Income"],
+                textposition = "outside",
+                y = [int(selected_submission['Total_Revenue'][time]), -int(selected_submission['Cost_of_Revenue'][time]), 0,
+                     -int(selected_submission['Selling'][time]), 
+                     -int(selected_submission['Gross_Profit'][time])+int(selected_submission['ebit'][time])+int(selected_submission['Selling'][time]), 0,
+                     -int(selected_submission['Interest_Expense'][time]),
+                     -int(selected_submission['ebit'][time])+int(selected_submission['Interest_Expense'][time])+int(selected_submission['Net_Income'][time]),0],
+                connector = {"line":{"color":"rgb(63, 63, 63)"}},
+            ))
+            fig.update_layout(
+                    title = "Profit and loss statement "+time,
+                    showlegend = True
+            )
+            st.plotly_chart(fig, theme="streamlit")
+        
 
