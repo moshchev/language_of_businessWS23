@@ -39,8 +39,93 @@ if st.session_state.submissions:
             st.write(f"Input: {submission['input']}")
             st.write("Result:")
             st.dataframe(submission['result'])
+            
+            form10k_inone=submission['result']
+            corp = "coca"
+            nom = 'Net Income'
+            denom = 'Total Revenue'
+            nomsource = 'is'
+            denomsource = 'is'
 
 
+            def get_rate(corp, nom, denom, nomsource, denomsource):
+                nom_data = form10k_inone[(form10k_inone['Data Source'].isin([nomsource])) & (form10k_inone['Company Name']== corp) & (form10k_inone['Financial Indicators'] == nom)]
+                denom_data = form10k_inone[(form10k_inone['Data Source'].isin([denomsource])) & (form10k_inone['Company Name']== corp) & (form10k_inone['Financial Indicators'] == denom)]
+                
+                nom_values=nom_data.iloc[:,3:].values
+                denom_values=denom_data.iloc[:,3:].values
+                
+                rate=nom_values/denom_values
+                return rate
+
+            #get_rate(corp,nom,denom,nomsource,denomsource)
+
+######################## new plot demo
+@st.experimental_memo
+def get_chart_83992296():
+    import plotly.graph_objects as go
+
+    fig = go.Figure(go.Waterfall(
+        name = "20", orientation = "v",
+        measure = ["relative", "relative", "total", "relative", "relative", "total"],
+        x = ["Sales", "Consulting", "Net revenue", "Purchases", "Other expenses", "Profit before tax"],
+        textposition = "outside",
+        text = ["+60", "+80", "", "-40", "-20", "Total"],
+        y = [60, 80, 0, -40, -20, 0],
+        connector = {"line":{"color":"rgb(63, 63, 63)"}},
+    ))
+
+    fig.update_layout(
+            title = "Profit and loss statement 2018",
+            showlegend = True
+    )
+
+
+    tab1, tab2 = st.tabs(["Streamlit theme (default)", "Plotly native theme"])
+    with tab1:
+        st.plotly_chart(fig, theme="streamlit")
+    with tab2:
+        st.plotly_chart(fig, theme=None)
+
+from vega_datasets import data
+
+"""@st.cache_data
+def get_data():
+    source = data.stocks()
+    source = source[source.date.gt("2004-01-01")]
+    return source
+
+source = get_data()
+
+# Original time series chart. Omitted `get_chart` for clarity
+#chart = get_chart(source)
+
+# Input annotations
+ANNOTATIONS = [
+    ("Mar 01, 2008", "Pretty good day for GOOG"),
+    ("Dec 01, 2007", "Something's going wrong for GOOG & AAPL"),
+    ("Nov 01, 2008", "Market starts again thanks to..."),
+    ("Dec 01, 2009", "Small crash for GOOG after..."),
+]
+
+# Create a chart with annotations
+annotations_df = pd.DataFrame(ANNOTATIONS, columns=["date", "event"])
+annotations_df.date = pd.to_datetime(annotations_df.date)
+annotations_df["y"] = 0
+annotation_layer = (
+    alt.Chart(annotations_df)
+    .mark_text(size=15, text="⬇", dx=-4, dy=-12, align="center")
+    .encode(
+        x="date:T",
+        y=alt.Y("y:Q"),
+        tooltip=["event"],
+    )
+    .interactive()
+)
+
+# Display both charts together
+st.altair_chart((chart + annotation_layer).interactive(), use_container_width=True)
+"""
 ######################## input the value 
 
 # 1. Metrics 1 --making net income for profitability
@@ -48,13 +133,15 @@ M1_cok = np.array([0.2218863361547763, 0.2527745440434614, 0.23465802386866177,
         0.23936027478130198], dtype=object)
 M1_pep = np.array([0.10313454949532364, 0.09585524825729169, 0.10117660433126811,
         0.10890248805110109], dtype=object)
-st.write(M1_cok)
+#st.write(M1_cok)
+
 #2. Metrics 2 --gross margin rate also for profitability
 M2_cok = np.array([[0.5814342851827737, 0.6027163368257664, 0.5931120130853578,
         0.6077121236515859]], dtype=object)
 M2_pep = np.array([[0.5303268821187147, 0.5334952311447769, 0.5481583584380151,
         0.5513467637468173]], dtype=object)
-st.write(M2_cok)
+#st.write(M2_cok)
+
 #3. Metrics 3 --Free Cash Flow to Total Revenue
 M3_cok = np.array([[0.22170030694819087, 0.29124304747121976, 0.26252498939843705,
         0.22586271668545055]], dtype=object)
@@ -146,7 +233,34 @@ with col3:
 col1, col2, col3 = st.columns(3)
 with col1:
     st.write("""#### Lists of movies filtered by year and Genre """)
-    st.line_chart(chart_data)
+    @st.cache_data
+    def get_chart_83992296():
+        import plotly.graph_objects as go
+
+        fig = go.Figure(go.Waterfall(
+            name = "20", orientation = "v",
+            measure = ["relative", "relative", "total", "relative", "relative", "total"],
+            x = ["Sales", "Consulting", "Net revenue", "Purchases", "Other expenses", "Profit before tax"],
+            textposition = "outside",
+            text = ["+60", "+80", "", "-40", "-20", "Total"],
+            y = [60, 80, 0, -40, -20, 0],
+            connector = {"line":{"color":"rgb(63, 63, 63)"}},
+        ))
+
+        fig.update_layout(
+                title = "Profit and loss statement 2018",
+                showlegend = True
+        )
+
+
+        tab1, tab2 = st.tabs(["Streamlit theme (default)", "Plotly native theme"])
+        with tab1:
+            st.plotly_chart(fig, theme="streamlit")
+        with tab2:
+            st.plotly_chart(fig, theme=None)
+
+
+    get_chart_83992296()    
 
 with col2:
     st.write("""#### User score of movies and their genre """)
@@ -159,3 +273,4 @@ with col3:
     st.header('display some numbers')
     st.write('')
     st.header('test value $100')
+    
