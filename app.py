@@ -23,7 +23,8 @@ def handle_submission():
     gross_margin_rate = get_rate(result_df,'Gross Profit', 'Total Revenue', 'is', 'is')
     fcf_to_revenue = get_rate(result_df, 'Free Cash Flow', 'Total Revenue', 'cf', 'is')
     cash_conversion_rate = get_rate(result_df, 'Operating Cash Flow', 'Net Income', 'cf', 'is')
-    
+    dso = get_rate(result_df, 'Accounts Receivable MA', 'Total Revenue', 'bs', 'is', year=True)
+
     # Append the DataFrame and input to the session state
     st.session_state['submissions'].append({
         'input': user_input, 
@@ -31,7 +32,8 @@ def handle_submission():
         'net_income': net_income,
         'gross_margin_rate':gross_margin_rate,
         'fcf_to_revenue': fcf_to_revenue,
-        'cash_conversion_rate': cash_conversion_rate
+        'cash_conversion_rate': cash_conversion_rate,
+        'dso':dso
     })
     st.session_state['compare_mode'] = False
 
@@ -70,7 +72,7 @@ if st.session_state.get('submissions') and len(st.session_state['submissions']) 
         submission2 = next((sub for sub in st.session_state['submissions'] if sub['input'] == company2), None)
 
 
-#-------------------------------------DISPLAY LOGIC
+#-------------------------------------DISPLAY LOGIC--------------------------#
 # check if compare mode activated
 # if yes -> it will display side by side comparisson #TODO -> replace it with overlapping graphs
 # if not -> it will display one selected company 
@@ -81,11 +83,14 @@ if st.session_state.get('compare_mode'):
         st.write(f"Ticker: {submission1['input']}")
         st.write("Result:")
         st.dataframe(submission1['result'])
+        st.dataframe(submission1['net_income'])
 
     with col2:
         st.write(f"Ticker: {submission2['input']}")
         st.write("Result:")
         st.dataframe(submission2['result'])
+        st.dataframe(submission2['net_income'])
+
 else:
     # Show the selected submission if not in comparison mode
         if selected_submission:
@@ -96,5 +101,7 @@ else:
             st.dataframe(selected_submission['net_income'])
             st.write('Gross Margin Rate')
             st.dataframe(selected_submission['gross_margin_rate'])
+            st.write('DSO')
+            st.dataframe(selected_submission['dso'])
             
 
