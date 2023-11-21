@@ -64,7 +64,7 @@ def get_data(ticker):
     
     return fin_table
 
-# TODO add sources
+
 def get_rate(df, nom, denom, nom_source, denom_source ,year = False):
 
     nom_data = df[(df['Financial Indicators'] == nom) & (df['Data Source'] == nom_source)]
