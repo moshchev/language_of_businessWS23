@@ -14,7 +14,7 @@ def get_chart_83992296():
         x = ["Sales", "Consulting", "Net revenue", "Purchases", "Other expenses", "Profit before tax"],
         textposition = "outside",
         text = ["+60", "+80", "", "-40", "-20", "Total"],
-        y = [60, 80, 0, -40, -20, 0],
+        y = [60, 20, 0, -40, -20, 0],
         connector = {"line":{"color":"rgb(63, 63, 63)"}},
     ))
 
@@ -22,6 +22,8 @@ def get_chart_83992296():
             title = "Profit and loss statement 2018",
             showlegend = True
     )
+
+
 
 
     tab1, tab2 = st.tabs(["Streamlit theme (default)", "Plotly native theme"])
@@ -32,3 +34,24 @@ def get_chart_83992296():
 
 
 get_chart_83992296()
+
+import streamlit as st
+import pandas as pd
+import numpy as np
+
+chart_data = pd.DataFrame(
+   {
+       "col1": np.random.randn(20),
+       "col2": np.random.randn(20),
+       "col3": np.random.choice(["A", "B", "C"], 20)
+       
+   }
+)
+st.write(chart_data)
+st.line_chart(chart_data, x="col1", y="col2", color="col3")
+
+chart_data = pd.DataFrame(np.random.randn(20, 3), columns=["col1", "col2", "col3"])
+st.write(chart_data)
+st.line_chart(
+   chart_data, x="col1", y=["col2", "col3"], color=["#FF0000", "#0000FF"]  # Optional
+)

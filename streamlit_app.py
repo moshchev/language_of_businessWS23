@@ -89,43 +89,6 @@ def get_chart_83992296():
 
 from vega_datasets import data
 
-"""@st.cache_data
-def get_data():
-    source = data.stocks()
-    source = source[source.date.gt("2004-01-01")]
-    return source
-
-source = get_data()
-
-# Original time series chart. Omitted `get_chart` for clarity
-#chart = get_chart(source)
-
-# Input annotations
-ANNOTATIONS = [
-    ("Mar 01, 2008", "Pretty good day for GOOG"),
-    ("Dec 01, 2007", "Something's going wrong for GOOG & AAPL"),
-    ("Nov 01, 2008", "Market starts again thanks to..."),
-    ("Dec 01, 2009", "Small crash for GOOG after..."),
-]
-
-# Create a chart with annotations
-annotations_df = pd.DataFrame(ANNOTATIONS, columns=["date", "event"])
-annotations_df.date = pd.to_datetime(annotations_df.date)
-annotations_df["y"] = 0
-annotation_layer = (
-    alt.Chart(annotations_df)
-    .mark_text(size=15, text="⬇", dx=-4, dy=-12, align="center")
-    .encode(
-        x="date:T",
-        y=alt.Y("y:Q"),
-        tooltip=["event"],
-    )
-    .interactive()
-)
-
-# Display both charts together
-st.altair_chart((chart + annotation_layer).interactive(), use_container_width=True)
-"""
 ######################## input the value 
 
 # 1. Metrics 1 --making net income for profitability
@@ -136,72 +99,92 @@ M1_pep = np.array([0.10313454949532364, 0.09585524825729169, 0.10117660433126811
 #st.write(M1_cok)
 
 #2. Metrics 2 --gross margin rate also for profitability
-M2_cok = np.array([[0.5814342851827737, 0.6027163368257664, 0.5931120130853578,
-        0.6077121236515859]], dtype=object)
-M2_pep = np.array([[0.5303268821187147, 0.5334952311447769, 0.5481583584380151,
-        0.5513467637468173]], dtype=object)
+M2_cok = np.array([0.5814342851827737, 0.6027163368257664, 0.5931120130853578,
+        0.6077121236515859], dtype=object)
+M2_pep = np.array([0.5303268821187147, 0.5334952311447769, 0.5481583584380151,
+        0.5513467637468173], dtype=object)
 #st.write(M2_cok)
 
 #3. Metrics 3 --Free Cash Flow to Total Revenue
-M3_cok = np.array([[0.22170030694819087, 0.29124304747121976, 0.26252498939843705,
-        0.22586271668545055]], dtype=object)
-M3_pep = np.array([[0.0648671173256783, 0.08796587563228225, 0.09056158699482748,
-        0.08065692887241108]], dtype=object)
+M3_cok = np.array([0.22170030694819087, 0.29124304747121976, 0.26252498939843705,
+        0.22586271668545055], dtype=object)
+M3_pep = np.array([0.0648671173256783, 0.08796587563228225, 0.09056158699482748,
+        0.08065692887241108], dtype=object)
 
 #3. Metrics 3--Cash Conversion Rate
-M31_cok = np.array([[1.154684552504716, 1.2920888343055983, 1.2706854266167549,
-        1.1738789237668161]], dtype=object)
-M31_pep = np.array([[1.2133557800224466, 1.5248096613284328, 1.4905898876404495,
-        1.3192507519824994]], dtype=object)
+M31_cok = np.array([1.154684552504716, 1.2920888343055983, 1.2706854266167549,
+        1.1738789237668161], dtype=object)
+M31_pep = np.array([1.2133557800224466, 1.5248096613284328, 1.4905898876404495,
+        1.3192507519824994], dtype=object)
 
 #4. Metrics 4-- solvency:leverage ratio debt-to-equity ratio
-M4_cok = np.array([[0.730201066885515, 0.828813986393503, 0.9615756241152282,
-        0.9803980008253473]], dtype=object)
-M4_pep = np.array([[0.7355787333383538, 0.775012970044002, 0.9053067585301837,
-        0.6899459971169776]], dtype=object)
+M4_cok = np.array([0.730201066885515, 0.828813986393503, 0.9615756241152282,
+        0.9803980008253473], dtype=object)
+M4_pep = np.array([0.7355787333383538, 0.775012970044002, 0.9053067585301837,
+        0.6899459971169776], dtype=object)
 
 #5. Calculate DSO
-M5_cok = np.array([[29.295414380057668, 30.9941792782305, 38.79263342824257,
-        38.360972468201574]], dtype=object)
-M5_pep = np.array([[39.2598851745532, 38.6934091652616, 41.50343886773148,
-        41.92790458748381]], dtype=object)
+M5_cok = np.array([29.295414380057668, 30.9941792782305, 38.79263342824257,
+        38.360972468201574], dtype=object)
+M5_pep = np.array([39.2598851745532, 38.6934091652616, 41.50343886773148,
+        41.92790458748381], dtype=object)
 
 #6. Calculate ITO
 # question? why there only three value by coke?
-M6_cok = np.array([[76.47, 78.29654229341669, 89.04191170996799, 83.20952185512006]],
+M6_cok = np.array([76.47, 78.29654229341669, 89.04191170996799, 83.20952185512006],
       dtype=object)
-M6_pep = np.array([[42.44923107255521, 41.35994605529332, 42.513444664591,
-        39.8805256869773]], dtype=object)
+M6_pep = np.array([42.44923107255521, 41.35994605529332, 42.513444664591,
+        39.8805256869773], dtype=object)
 
 #6. Calculate DPO
-M61_cok = np.array([[303.68, 301.9808556358664, 300.9201220873967, 278.56351323619947]],
+M61_cok = np.array([303.68, 301.9808556358664, 300.9201220873967, 278.56351323619947],
       dtype=object)
-M61_pep = np.array([[197.54041798107255, 197.84706675657452, 210.2066232663459,
-        209.56989247311827]], dtype=object)
+M61_pep = np.array([197.54041798107255, 197.84706675657452, 210.2066232663459,
+        209.56989247311827], dtype=object)
 
 #7.  Calculate Assets Turnover Rate
-M7_cok = np.array([[0.45964824147458544, 0.42559867877786955, 0.3801769952267715,
-        0.43141431564811705]], dtype=object)
-M7_pep = np.array([[0.9361739017359831, 0.857810518362611, 0.8208322398157059,
-        0.8550422040307077]], dtype=object)
+M7_cok = np.array([0.45964824147458544, 0.42559867877786955, 0.3801769952267715,
+        0.43141431564811705], dtype=object)
+M7_pep = np.array([0.9361739017359831, 0.857810518362611, 0.8208322398157059,
+        0.8550422040307077], dtype=object)
 
 #8. Calculate the Current Ratio
-M8_cok = np.array([[1.1453559115798013, 1.130075187969925, 1.317717964522978,
-        0.7567196826456086]], dtype=object)
-M8_pep = np.array([[0.8041441105096135, 0.8307780320366133, 0.9841263049803183,
-        0.8623723180685205]], dtype=object)
+M8_cok = np.array([1.1453559115798013, 1.130075187969925, 1.317717964522978,
+        0.7567196826456086], dtype=object)
+M8_pep = np.array([0.8041441105096135, 0.8307780320366133, 0.9841263049803183,
+        0.8623723180685205], dtype=object)
 
 #9. Calculate the interest coverage ratio---Solvency
-M9_cok = np.array([[14.249433106575964, 8.780212899185974, 7.784272790535838,
-        12.40169133192389]], dtype=object)
-M9_pep = np.array([[12.400425985090521, 6.271604938271605, 9.039893617021276,
-        9.204405286343613]], dtype=object)
+M9_cok = np.array([14.249433106575964, 8.780212899185974, 7.784272790535838,
+        12.40169133192389], dtype=object)
+M9_pep = np.array([12.400425985090521, 6.271604938271605, 9.039893617021276,
+        9.204405286343613], dtype=object)
 
 date = ['12.2022','12.2021','12.2020','12.2019']
 ######################## visulation part
 
 
-chart_data = pd.DataFrame(M1_cok,index= date)
+chart_data1c = pd.DataFrame(M1_cok,index= date)
+chart_data1p = pd.DataFrame(M1_pep,index= date)
+chart_data2c = pd.DataFrame(M2_cok,index= date)
+chart_data2p = pd.DataFrame(M2_pep,index= date)
+chart_data3c = pd.DataFrame(M3_cok,index= date)
+chart_data3p = pd.DataFrame(M3_pep,index= date)
+chart_data4c = pd.DataFrame(M4_cok,index= date)
+chart_data4p = pd.DataFrame(M4_pep,index= date)
+chart_data5c = pd.DataFrame(M5_cok,index= date)
+chart_data5p = pd.DataFrame(M5_pep,index= date)
+chart_data6c = pd.DataFrame(M6_cok,index= date)
+chart_data6p = pd.DataFrame(M6_pep,index= date)
+chart_data7c = pd.DataFrame(M7_cok,index= date)
+chart_data7p = pd.DataFrame(M7_pep,index= date)
+chart_data8c = pd.DataFrame(M8_cok,index= date)
+chart_data8p = pd.DataFrame(M8_pep,index= date)
+chart_data9c = pd.DataFrame(M9_cok,index= date)
+chart_data9p = pd.DataFrame(M9_pep,index= date)
+
+
+
 
 #rst.header('pie chart')
 import plotly.express as px
@@ -216,15 +199,50 @@ df = pd.DataFrame(dict(
 fig1 = px.line_polar(df, r='r', theta='theta', line_close=True)
 #st.plotly_chart(fig1)
 
+import plotly.express as px
+
+df = px.data.gapminder().query("country in ['Canada', 'Botswana']")
+
+fig = px.line(M1_cok, x="1", y="1", color="country", text="year")
+fig.update_traces(textposition="bottom right")
+st.plotly_chart(fig,use_container_width=True)
+
+
 
 col1, col2, col3 = st.columns(3)
 with col1:
-    st.write("""#### Lists of movies filtered by year and Genre """)
-    st.area_chart(chart_data)
+    st.write("making net income for profitability")
+    st.line_chart(chart_data1c)
+    st.line_chart(chart_data1p)
+    st.write("gross margin rate also for profitability")
+    st.line_chart(chart_data2c)
+    st.line_chart(chart_data2p)
+    st.write("Free Cash Flow to Total Revenue")
+    st.line_chart(chart_data3c)
+    st.line_chart(chart_data3p)
+    st.write("solvency:leverage ratio debt-to-equity ratio")
+    st.line_chart(chart_data4c)
+    st.line_chart(chart_data4p)
+    st.write("DSO")
+    st.line_chart(chart_data5c)
+    st.line_chart(chart_data5p)
+    st.write("ITO")
+    st.line_chart(chart_data6c)
+    st.line_chart(chart_data6p)
+    st.write("Assets Turnover Rate")
+    st.line_chart(chart_data7c)
+    st.line_chart(chart_data7p)
+    st.write("Current Ratio")
+    st.line_chart(chart_data8c)
+    st.line_chart(chart_data8p)
+    st.write("the interest coverage ratio---Solvency")
+    st.line_chart(chart_data9c)
+    st.line_chart(chart_data9p)
+
 
 with col2:
     st.write("""#### User score of movies and their genre """)
-    st.bar_chart(chart_data)
+    st.bar_chart(chart_data1c)
     st.write('t\n t\n t\n')
 
 with col3:

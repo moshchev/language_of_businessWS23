@@ -26,9 +26,9 @@ def handle_submission():
     fcf_to_revenue = get_rate(result_df, 'Free Cash Flow', 'Total Revenue', 'cf', 'is')
     cash_conversion_rate = get_rate(result_df, 'Operating Cash Flow', 'Net Income', 'cf', 'is')
     dso = get_rate(result_df, 'Accounts Receivable MA', 'Total Revenue', 'bs', 'is', year=True)
-    ito = get_rate(result_df, "InventoryMA","Cost Of Revenue","bs","is", year=True)
-    dpo = get_rate(result_df, "Accounts PayableMA","Cost Of Revenue","bs","is", year=True)
-    assert_Turnover_Rate = get_rate(result_df, "Total Revenue", "Total AssetsMA", "is", "bs")
+    ito = get_rate(result_df, "Inventory MA","Cost Of Revenue","bs","is", year=True)
+    dpo = get_rate(result_df, "Accounts Payable MA","Cost Of Revenue","bs","is", year=True)
+    assert_Turnover_Rate = get_rate(result_df, "Total Revenue", "Total Assets MA", "is", "bs")
     Current_Ratio =  get_rate(result_df, "Current Assets", "Current Liabilities", "bs", "bs")
     Solvency = get_rate(result_df, "EBIT","Interest Expense","is","is")
     
@@ -201,6 +201,3 @@ else:
             st.write(chart_data)
 
             st.line_chart(chart_data)
-            
-        
-
