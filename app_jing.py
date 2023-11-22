@@ -26,9 +26,9 @@ def handle_submission():
     fcf_to_revenue = get_rate(result_df, 'Free Cash Flow', 'Total Revenue', 'cf', 'is')
     cash_conversion_rate = get_rate(result_df, 'Operating Cash Flow', 'Net Income', 'cf', 'is')
     dso = get_rate(result_df, 'Accounts Receivable MA', 'Total Revenue', 'bs', 'is', year=True)
-    ito = get_rate(result_df, "InventoryMA","Cost Of Revenue","bs","is", year=True)
-    dpo = get_rate(result_df, "Accounts PayableMA","Cost Of Revenue","bs","is", year=True)
-    assert_Turnover_Rate = get_rate(result_df, "Total Revenue", "Total AssetsMA", "is", "bs")
+    ito = get_rate(result_df, "Inventory MA","Cost Of Revenue","bs","is", year=True)
+    dpo = get_rate(result_df, "Accounts Payable","Cost Of Revenue","bs","is", year=True)
+    assert_Turnover_Rate = get_rate(result_df, "Total Revenue", "Total Assets MA", "is", "bs")
     Current_Ratio =  get_rate(result_df, "Current Assets", "Current Liabilities", "bs", "bs")
     Solvency = get_rate(result_df, "EBIT","Interest Expense","is","is")
     
@@ -100,6 +100,8 @@ if st.session_state.get('submissions') and len(st.session_state['submissions']) 
     st.sidebar.write("Comparison Mode")
     company1 = st.sidebar.selectbox('Select the first company', view_options, key='company1')
     company2 = st.sidebar.selectbox('Select the second company', view_options, key='company2')
+    compare_list = list(['gross_margin_rate','fcf_to_revenue','cash_conversion_rate','assert_Turnover_Rate', 'dso','ito','dpo',"Current_Ratio",'Solvency'])
+    radio = st.sidebar.selectbox('selcet the radios you want to compare',compare_list)
     compare_button = st.sidebar.button('Compare')
 
     # if you click on the button, it will check whether two companies are not equal and then
@@ -115,18 +117,19 @@ if st.session_state.get('submissions') and len(st.session_state['submissions']) 
 # if not -> it will display one selected company 
 
 if st.session_state.get('compare_mode'):
+    st.header("compare radios in " + radio)
     col1, col2 = st.columns(2)
     with col1:
-        st.write(f"Ticker: {submission1['input']}")
-        st.write("Result:")
-        st.dataframe(submission1['result'])
-        st.dataframe(submission1['net_income'])
-
+        st.write("## "+company1)
+        st.write(submission1[radio])
     with col2:
-        st.write(f"Ticker: {submission2['input']}")
-        st.write("Result:")
-        st.dataframe(submission2['result'])
-        st.dataframe(submission2['net_income'])
+        st.write("## "+company2)
+        st.write(submission2[radio])
+    chart_data = submission1[radio].T
+    chart_data.rename(columns={0: company1}, inplace=True)
+    chart_data.insert(1,company2,submission2[radio].T)
+    st.line_chart(chart_data)
+    
 
 else:
     # Show the selected submission if not in comparison mode
@@ -134,17 +137,6 @@ else:
             st.write(f"Input: {selected_submission['input']}")
             st.write("Result:")
             st.dataframe(selected_submission['result'])
-            st.write('Net Income')
-            st.dataframe(selected_submission['net_income'])
-            st.write('Gross Margin Rate')
-            st.dataframe(selected_submission['gross_margin_rate'])
-            st.write('DSO')
-            st.dataframe(selected_submission['dso'])
-            st.write('Total Revenue')
-            st.dataframe(selected_submission['Total_Revenue'])
-            st.write('Gross_Profit')
-            st.dataframe(selected_submission['Gross_Profit'])
-            st.dataframe(selected_submission['Cost_of_Revenue'])
             st.write('## draw the waterfall chart')
             time = st.selectbox('selcet the time',(list(selected_submission['Gross_Profit'].columns)))
             waterfall = go.Figure(go.Waterfall(
@@ -192,15 +184,20 @@ else:
                 st.plotly_chart(waterfall, theme="streamlit",use_container_width=True) 
             with col2:
                 st.plotly_chart(waterfall1, theme="streamlit",use_container_width=True) 
-            st.write(selected_submission)
-            st.write(selected_submission['ito'].T)
-            st.write(selected_submission['dpo'].T)
-            chart_data = selected_submission['dso'].T
-            chart_data.insert(1,'fcf_to_revenue',selected_submission['fcf_to_revenue'].T)
-            chart_data.insert(1,'cash_conversion_rate',selected_submission['cash_conversion_rate'].T)
-            st.write(chart_data)
 
-            st.line_chart(chart_data)
+            chart_data = selected_submission['dso'].T
+            chart_data.rename(columns={0: 'dso'}, inplace=True)
+            chart_data.insert(1,'dpo',selected_submission['dpo'].T)
+            chart_data.insert(1,'ito',selected_submission['ito'].T)
+            st.header("Show DPO ITO and DSO")
+            col1, col2 = st.columns([2,3])
+            with col1:
+                st.write("data table")
+                st.write(chart_data)
+            with col2:
+                st.line_chart(chart_data)
+            
+            
             
         
 
