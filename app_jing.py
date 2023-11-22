@@ -126,7 +126,7 @@ if st.session_state.get('compare_mode'):
         st.write("## "+company2)
         st.write(submission2[radio])
     chart_data = submission1[radio].T
-    chart_data.insert(1,company2,submission2[radio].T)
+    chart_data.insert(1,company2,submission2[radio].T) 
     chart_data.rename(columns={0: company1}, inplace=True)
     st.write(chart_data)
     st.line_chart(chart_data)
