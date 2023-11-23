@@ -4,6 +4,28 @@ import streamlit as st
 from data_retrival import *
 import plotly.graph_objects as go
 
+def plot_ccc_trend(chart_data, year):
+    chart_data['ccc'] = chart_data['dso'] + chart_data['ito'] - chart_data['dpo']
+    data = chart_data.loc[year]
+    # Define measures for waterfall chart
+    measures = ['relative', 'relative', 'relative', 'total']
+    # Create a Waterfall chart
+    fig = go.Figure(go.Waterfall(
+        name="Cash Conversion Cycle",
+        orientation="v",
+        measure=measures,
+        x=['DSO', 'ITO', '-DPO', 'CCC'],
+        textposition="outside",
+        y=[data['dso'], data['ito'], -data['dpo'], data['ccc']],
+        connector={"line": {"color": "rgb(63, 63, 63)"}},
+    ))
+    fig.update_layout(
+        title=f"Cash Conversion Cycle (CCC) in {year}",
+        showlegend=True
+    )
+    return fig
+
+
 st.set_page_config(layout="wide")
 #------ INIALISAION OF APP
 # create session state -> will st.session_state can store data inside of it
@@ -77,22 +99,23 @@ def handle_submission():
 initialise_session_state()
 # App main interface
 # header
-st.title('Data Processing App')
+st.title('Financial Analysis Engine Dashboard')
 # Sidebar for input and submission
 user_input = st.sidebar.text_input("Enter ticker of a company", "")
 submit_button = st.sidebar.button('Submit', on_click=handle_submission)
 
 submission1 = submission2 = selected_view = selected_submission= None # initialise empty vars for the comparisson mode
 
-# Dropdown for selecting a company to view
+# # Dropdown for selecting a company to view
 if st.session_state.get('submissions'):
     view_options = [submission['input'] for submission in st.session_state['submissions']]
     selected_view = st.sidebar.selectbox('Select a company to view', view_options, key='selected_view')
     selected_submission = next((sub for sub in st.session_state['submissions'] if sub['input'] == selected_view), None)
 
-# Reset comparison mode when a new company is selected to view
-if selected_view and st.session_state.get('compare_mode'):
-    st.session_state['compare_mode'] = False
+    # Reset comparison mode when a new company is selected to view
+    if selected_view and st.session_state.get('compare_mode') and st.session_state.get('last_view') != selected_view:
+        st.session_state['compare_mode'] = False
+    st.session_state['last_view'] = selected_view
 
 # Dropdowns and button for comparison mode -> comparisson mode will appear when more than one company will be submitted
 if st.session_state.get('submissions') and len(st.session_state['submissions']) > 1:
@@ -100,8 +123,6 @@ if st.session_state.get('submissions') and len(st.session_state['submissions']) 
     st.sidebar.write("Comparison Mode")
     company1 = st.sidebar.selectbox('Select the first company', view_options, key='company1')
     company2 = st.sidebar.selectbox('Select the second company', view_options, key='company2')
-    compare_list = list(['gross_margin_rate','fcf_to_revenue','cash_conversion_rate','assert_Turnover_Rate', 'dso','ito','dpo',"Current_Ratio",'Solvency'])
-    radio = st.sidebar.selectbox('selcet the radios you want to compare',compare_list)
     compare_button = st.sidebar.button('Compare')
 
     # if you click on the button, it will check whether two companies are not equal and then
@@ -110,40 +131,42 @@ if st.session_state.get('submissions') and len(st.session_state['submissions']) 
         submission1 = next((sub for sub in st.session_state['submissions'] if sub['input'] == company1), None)
         submission2 = next((sub for sub in st.session_state['submissions'] if sub['input'] == company2), None)
 
+# Sidebar for selecting a company to view and comparison mode
 
 #-------------------------------------DISPLAY LOGIC--------------------------#
 # check if compare mode activated
 # if yes -> it will display side by side comparisson #TODO -> replace it with overlapping graphs
 # if not -> it will display one selected company 
 
-if st.session_state.get('compare_mode'):
-    st.header("compare radios in " + radio)
-    col1, col2 = st.columns(2)
-    with col1:
-        st.write("## "+company1)
-        st.write(submission1[radio])
-    with col2:
-        st.write("## "+company2)
-        st.write(submission2[radio])
-    sub1=submission1[radio]
-    sub1.columns = [col.split('-')[2] if '-' in col else col for col in sub1.columns]
-    sub2=submission2[radio]
-    sub2.columns = [col.split('-')[2] if '-' in col else col for col in sub1.columns]
-    chart_data = sub1.T
-    chart_data.insert(1,company2,sub2.T) 
-    chart_data.rename(columns={0: company1}, inplace=True)
-    st.write(chart_data)
-    st.line_chart(chart_data)
-    
+if st.session_state.get('compare_mode') and submission1 and submission2:
+    compare_list = ['gross_margin_rate', 'fcf_to_revenue', 'cash_conversion_rate', 'assert_Turnover_Rate', "Current_Ratio", 'Solvency']
 
+    for i, ratio in enumerate(compare_list):
+        if i % 3 == 0:
+            cols = st.columns(3)
+
+        with cols[i % 3]:
+            st.header(f"Comparing {ratio}")
+
+            # Preparing data for line chart
+            sub1_data = submission1[ratio].rename(columns={0: company1})
+            sub2_data = submission2[ratio].rename(columns={0: company2})
+            sub1_data.columns = [col.split('-')[2] if '-' in col else col for col in sub1_data.columns]
+            sub2_data.columns = [col.split('-')[2] if '-' in col else col for col in sub2_data.columns]
+            
+            # Combining data for chart
+            chart_data = sub1_data.T
+            chart_data.insert(1, company2, sub2_data.T) 
+            chart_data = chart_data.rename(columns={0: company1})
+
+            st.line_chart(chart_data)
+    
 else:
     # Show the selected submission if not in comparison mode
         if selected_submission:
-            st.write(f"Input: {selected_submission['input']}")
-            st.write("Result:")
-            st.dataframe(selected_submission['result'])
-            st.write('## draw the waterfall chart')
-            time = st.selectbox('selcet the time',(list(selected_submission['Gross_Profit'].columns)))
+            st.write(f"Ticker: {selected_submission['input']}")
+            st.write('## Waterfall chart')
+            time = st.selectbox('Selcet the period',(list(selected_submission['Gross_Profit'].columns)))
             waterfall = go.Figure(go.Waterfall(
                 name = "", orientation = "v",
                 measure = ["relative", "relative", "total", 
@@ -183,26 +206,18 @@ else:
                     title = "Cash flow in "+time,
                     showlegend = True
             )
-            
             col1, col2 = st.columns(2)
             with col1:
                 st.plotly_chart(waterfall, theme="streamlit",use_container_width=True) 
             with col2:
                 st.plotly_chart(waterfall1, theme="streamlit",use_container_width=True) 
-
+            
+            ### second row of metrics
             chart_data = selected_submission['dso'].T
             chart_data.rename(columns={0: 'dso'}, inplace=True)
             chart_data.insert(1,'dpo',selected_submission['dpo'].T)
             chart_data.insert(1,'ito',selected_submission['ito'].T)
-            st.header("Show DPO ITO and DSO")
-            col1, col2 = st.columns([2,3])
-            with col1:
-                st.write("data table")
-                st.write(chart_data)
-            with col2:
-                st.line_chart(chart_data)
+            st.header("DPO ITO and DSO")
             
-            
-            
-        
-
+            fig = plot_ccc_trend(chart_data, time)
+            st.plotly_chart(fig, use_container_width=True)
