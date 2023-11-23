@@ -220,4 +220,19 @@ else:
             st.header("DPO ITO and DSO")
             
             fig = plot_ccc_trend(chart_data, time)
-            st.plotly_chart(fig, use_container_width=True)
+            
+            col1, col2, col3 = st.columns([2,1,1])
+            with col1:
+                st.plotly_chart(fig, use_container_width=True) 
+            with col2:
+                st.header("Gross Profit:")
+                st.header("EBIT:")
+                st.header("Net Income:")
+                
+            with col3:
+                st.header('$ '+str(int(+selected_submission['Gross_Profit'][time])/1000000)+'M')
+                st.header('$ '+str(int(+selected_submission['ebit'][time])/1000000)+'M')
+                st.header('$ '+str(int(+selected_submission['Net_Income'][time])/1000000)+'M')
+                
+                
+
