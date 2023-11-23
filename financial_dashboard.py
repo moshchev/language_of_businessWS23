@@ -164,9 +164,9 @@ if st.session_state.get('compare_mode') and submission1 and submission2:
 else:
     # Show the selected submission if not in comparison mode
         if selected_submission:
-            st.write(f"Ticker: {selected_submission['input']}")
-            st.write('## Waterfall chart')
-            time = st.selectbox('Selcet the period',(list(selected_submission['Gross_Profit'].columns)))
+            st.write(f"## Ticker: {selected_submission['input']}")
+            st.write('## Select the period')
+            time = st.selectbox('',(list(selected_submission['Gross_Profit'].columns)))
             waterfall = go.Figure(go.Waterfall(
                 name = "", orientation = "v",
                 measure = ["relative", "relative", "total", 
@@ -233,6 +233,3 @@ else:
                 st.header('$ '+str(int(+selected_submission['Gross_Profit'][time])/1000000)+'M')
                 st.header('$ '+str(int(+selected_submission['ebit'][time])/1000000)+'M')
                 st.header('$ '+str(int(+selected_submission['Net_Income'][time])/1000000)+'M')
-                
-                
-
