@@ -6,7 +6,7 @@ authors = ["Alexander Moshchev <118296062+moshchev@users.noreply.github.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = ">=3.9,<3.9.7 || >3.9.7,<4.0"
 
 [tool.poetry.group.dev.dependencies]
 altair = "^5.1.2"
