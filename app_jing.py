@@ -78,7 +78,7 @@ def handle_submission():
         'dso':dso,
         'ito':ito,
         'dpo':dpo,
-        'assert_Turnover_Rate':assert_Turnover_Rate,
+        'Asset Turnover Rate':assert_Turnover_Rate,
         "Current_Ratio":Current_Ratio,
         'Solvency':Solvency,
         'Total_Revenue':Total_Revenue,
@@ -139,14 +139,14 @@ if st.session_state.get('submissions') and len(st.session_state['submissions']) 
 # if not -> it will display one selected company 
 
 if st.session_state.get('compare_mode') and submission1 and submission2:
-    compare_list = ['gross_margin_rate', 'fcf_to_revenue', 'cash_conversion_rate', 'assert_Turnover_Rate', "Current_Ratio", 'Solvency']
+    compare_list = ['gross_margin_rate', 'fcf_to_revenue', 'cash_conversion_rate', 'Asset Turnover Rate', "Current_Ratio", 'Solvency']
 
     for i, ratio in enumerate(compare_list):
         if i % 3 == 0:
             cols = st.columns(3)
 
         with cols[i % 3]:
-            st.header(f"Comparing {ratio}")
+            st.header(ratio)
 
             # Preparing data for line chart
             sub1_data = submission1[ratio].rename(columns={0: company1})
