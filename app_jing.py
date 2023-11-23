@@ -72,14 +72,14 @@ def handle_submission():
         'input': user_input, 
         'result': result_df,
         'net_income': net_income ,
-        'gross_margin_rate':gross_margin_rate,
-        'fcf_to_revenue': fcf_to_revenue,
-        'cash_conversion_rate': cash_conversion_rate,
+        'Gross Margin Rate':gross_margin_rate,
+        'Free Cash Flow to Revenue': fcf_to_revenue,
+        'Cash Conversion Rate': cash_conversion_rate,
         'dso':dso,
         'ito':ito,
         'dpo':dpo,
         'Asset Turnover Rate':assert_Turnover_Rate,
-        "Current_Ratio":Current_Ratio,
+        'Current Ratio':Current_Ratio,
         'Solvency':Solvency,
         'Total_Revenue':Total_Revenue,
         'Cost_of_Revenue':Cost_of_Revenue,
@@ -139,7 +139,7 @@ if st.session_state.get('submissions') and len(st.session_state['submissions']) 
 # if not -> it will display one selected company 
 
 if st.session_state.get('compare_mode') and submission1 and submission2:
-    compare_list = ['gross_margin_rate', 'fcf_to_revenue', 'cash_conversion_rate', 'Asset Turnover Rate', "Current_Ratio", 'Solvency']
+    compare_list = ['Gross Margin Rate', 'Free Cash Flow to Revenue', 'Cash Conversion Rate', 'Asset Turnover Rate', "Current Ratio", 'Solvency']
 
     for i, ratio in enumerate(compare_list):
         if i % 3 == 0:
@@ -149,8 +149,8 @@ if st.session_state.get('compare_mode') and submission1 and submission2:
             st.header(ratio)
 
             # Preparing data for line chart
-            sub1_data = submission1[ratio].rename(columns={0: company1})
-            sub2_data = submission2[ratio].rename(columns={0: company2})
+            sub1_data = submission1[f'{ratio}'].rename(columns={0: company1})
+            sub2_data = submission2[f'{ratio}'].rename(columns={0: company2})
             sub1_data.columns = [col.split('-')[2] if '-' in col else col for col in sub1_data.columns]
             sub2_data.columns = [col.split('-')[2] if '-' in col else col for col in sub2_data.columns]
             
